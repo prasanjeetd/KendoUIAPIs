@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Binding to local data</title>
+    <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>`
+    <script src="http://cdn.kendostatic.com/2012.1.515/js/kendo.all.min.js"></script>
+    <link href="http://cdn.kendostatic.com/2012.1.515/styles/kendo.common.min.css" rel="stylesheet" />
+	<link href="http://cdn.kendostatic.com/2012.1.515/styles/kendo.default.min.css" rel="stylesheet" />
+</head>
+<body>
+	<script src="people.js"></script>
+
+	<div id="example" class="k-content">
+		<!-- grid element -->
+		<div id="grid" style="width: 700px; margin: 0 auto;"></div>
+		
+		<!-- popup editor template -->
+		<script id="popup_editor" type="text/x-kendo-template">
+			<p>Custom editor template</p>
+			<div class="k-edit-label">
+				<label for="FirstName">First Name</label>
+			</div>
+			<!-- drop down list editor for field: "FirstName" -->
+			<input name="FirstName" 
+				data-bind="value:FirstName" 
+				data-value-field="FirstName" 
+				data-text-field="FirstName" 
+				data-source="dropDownDataSource" 
+				data-role="dropdownlist" />
+				
+			<div class="k-edit-label">
+				<label for="LastName" style="color: red;">Last Name</label>
+			</div>
+			<!-- textbox editor for field: "LastName" -->
+			<!-- field: "LastName" is not included as a grid column -->
+			<input type="text" class="k-input k-textbox" name="LastName" data-bind="value:LastName">
+			
+			<div class="k-edit-label">
+				<label for="BirthDate">Birth Date</label>
+			</div>
+			<!-- datepicker editor for field: "BirthDate" -->
+			<input type="text" 
+				name="BirthDate" 
+				data-type="date" 
+				data-bind="value:BirthDate" 
+				data-role="datepicker" />
+				
+			<div class="k-edit-label">
+				<label for="Age">Age</label>
+			</div>
+			<!-- numeric textbox editor for field: "Age" -->
+			<input type="text" name="Age" data-type="number" data-bind="value:Age" data-role="numerictextbox" />
+
+		</script>
+		
+		<script>
+			var data = createRandomData(50);
+			var dropDownDataSource = new kendo.data.DataSource({
+				data: data,
+				schema: {
+					model: {
+						fields: {
+							FirstName: { type: "string" },
+							LastName: { type: "string" },
+							City: { type: "string" },
+							Title: { type: "string" },
+							BirthDate: { type: "date" },
+							Age: { type: "number" }
+						}
+					}
+				}
+			});
+		
+			$(document).ready(function() {
+				$("#grid").kendoGrid({
+					dataSource: {
+						data: data,
+						schema: {
+							model: {
+								fields: {
+									FirstName: { type: "string" },
+									LastName: { type: "string" },
+									City: { type: "string" },
+									Title: { type: "string" },
+									BirthDate: { type: "date" },
+									Age: { type: "number" }
+								}
+							}
+						},
+						pageSize: 10
+					},
+					height: 450,
+					scrollable: true,
+					sortable: true,
+					pageable: true,
+					editable: {
+						mode: "popup",
+						template: kendo.template($("#popup_editor").html())
+					},
+					edit: function(e) {
+						$(e.container)
+							.find("input[name='FirstName']")
+								.data("kendoDropDownList")
+									.bind("change", function(e) {
+										console.log("drop down changed");
+									});
+					},
+					toolbar: ["create"],
+					columns: [
+						{
+							field: "FirstName",
+							title: "First Name",
+							width: 100
+						},
+						{
+							field: "BirthDate",
+							title: "Birth Date",
+							template: '#= kendo.toString(BirthDate,"MM/dd/yyyy") #'
+						},
+						{
+							field: "Age",
+							width: 100
+						},
+						{
+							command: ["edit", "destroy"],
+							title: "&nbsp;",
+							width: "200px"
+						}
+					]
+				});
+			});
+		</script>
+	</div>
+
+</body>
+</html>

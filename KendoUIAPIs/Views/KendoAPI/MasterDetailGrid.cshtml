@@ -1,0 +1,59 @@
+﻿@{
+    ViewBag.Title = "MasterDetailGrid";
+}
+
+<h2>MasterDetailGrid</h2>
+
+@Styles.Render("~/KendoLibrary/styles/kendo.common.min.css")
+@Styles.Render("~/KendoLibrary/styles/kendo.rtl.min.css")
+@Styles.Render("~/KendoLibrary/styles/kendo.default.min.css")
+
+@Scripts.Render("~/KendoLibrary/js/jquery.min.js")
+@Scripts.Render("~/KendoLibrary/js/kendo.web.min.js")
+
+
+<script id="applicantlist-template" type="text/x-kendo-template">
+           
+    
+</script>
+
+<div>
+    <div class="box-col">
+        <h4>Master Grid</h4>
+
+        <div id="applicantGrid"
+            data-role="grid"
+            data-columns="[
+                                    { 'field': 'RoundName', 'title': 'Rounds', 'width': 270 },
+                                 ]"
+            data-bind="source: rounds, events: { dataBound: databound, detailInit: gridDetailInit }"
+            data-row-template="rowTemplate"
+            data-alt-row-template="altRowTemplate"
+            data-detail-template="detailTemplate">
+        </div>
+    </div>
+</div>
+
+<script id="rowTemplate" type="text/x-kendo-tmpl">
+		    <tr data-uid='#=uid#' class="k-master-row k-row"> 
+			    <td  class="k-hierarchy-cell k-counter">
+                    <a href="\#" class="k-icon k-plus" ></a>
+                </td> 		
+			    <td><span data-bind = "text:RoundName" > </span>  </td >
+		    </tr >
+</script>
+
+<script id="altRowTemplate" type="text/x-kendo-tmpl">
+           <tr data-uid='#=uid#' class="k-master-row k-alt-row"> 
+			    <td class="k-hierarchy-cell k-counter"> 
+                    <a href="\#" class="k-icon k-plus" style="display:none;"></a>
+                </td>
+                <td ><span data-bind = "text:RoundName" > </span> </td >         
+            </tr >
+</script>
+
+<script id="detailTemplate" type="text/x-kendo-tmpl">
+          <div class="detailGrid"></div>
+</script>
+
+@Scripts.Render("~/Scripts/KendoViewModels/MasterDetailGrid.js")

@@ -1,0 +1,132 @@
+﻿@{
+    ViewBag.Title = "GridInlineEditing";
+}
+
+
+@Styles.Render("~/KendoLibrary/styles/kendo.common.min.css")
+@Styles.Render("~/KendoLibrary/styles/kendo.rtl.min.css")
+@Styles.Render("~/KendoLibrary/styles/kendo.default.min.css")
+
+@Scripts.Render("~/KendoLibrary/js/jquery.min.js")
+@Scripts.Render("~/KendoLibrary/js/kendo.web.min.js")
+
+<h2>GridInlineEditing</h2>
+
+<div id="example" class="k-content">
+    <div id="grid"></div>
+
+    <script>
+        $(document).ready(function () {
+            var crudServiceBaseUrl = "http://localhost:1282/api/Product",
+                dataSource = new kendo.data.DataSource({
+                    transport: {
+                        read: {
+                            url: crudServiceBaseUrl + "/GetProduct",
+                            dataType: "json"
+                        },
+                        update: {
+                            url: crudServiceBaseUrl + "/Update",
+                            dataType: "json"
+                        },
+                        destroy: {
+                            url: crudServiceBaseUrl + "/Destroy",
+                            dataType: "json"
+                        },
+                        create: {
+                            url: crudServiceBaseUrl + "/Create",
+                            dataType: "json"
+                        },
+                        parameterMap: function (options, operation) {
+                            if (operation !== "read" && options.models) {
+                                return { models: kendo.stringify(options.models) };
+                            }
+                        }
+                    },
+                    batch: true,
+                    pageSize: 20,
+                    schema: {
+                        model: {
+                            id: "ProductID",
+                            fields: {
+                                ProductID: { editable: false, nullable: true },
+                                ProductName: { validation: { required: true } },
+                                UnitPrice: { type: "number", validation: { required: true, min: 1 } },
+                                Discontinued: { type: "boolean" },
+                                UnitsInStock: { type: "number", validation: { min: 0, required: true } }
+                            }
+                        }
+                    }
+                });
+
+            $("#grid").kendoGrid({
+                dataSource: dataSource,
+                pageable: true,
+                height: 430,
+                toolbar: ["create"],
+                columns: [
+                    "ProductName",
+                    { field: "UnitPrice", title: "Unit Price", format: "{0:c}", width: "100px" },
+                    { field: "UnitsInStock", title: "Units In Stock", width: "100px" },
+                    { field: "Discontinued", width: "100px" },
+                    { command: ["edit", "destroy"], title: "&nbsp;", width: "172px" }],
+                editable: "inline"
+            });
+
+            $("#button1").click(function () {
+                CallPostMethod();
+            });
+
+        });
+
+        function CallPostMethod() {
+            var product = { ProductId: "3", ProductName: "New Product", UnitPrice: "200" };
+
+            var productJSON = JSON.stringify(product);
+
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:1282/api/Product",
+                data: productJSON,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    alert('In Ajax');
+                },
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+                }
+            });
+        }
+
+        function SaveProducts() {
+            var serviceUrl = getServiceRootUrl();
+            //http://dnn722/DesktopModules/Services/API/Products/getCategory
+
+            var productUrl = serviceUrl + "/Products/PostProduct";
+            var productname = $('#ProductName').val();
+            //var sel = document.getElementById('options');
+            //var id = sel.options[sel.selectedIndex()].val();
+            var id = $('#options').val();
+            var rate = $('#Rate').val();
+
+            var product = { ProductId: null, ProductName: productname, CategoryId: id, Rate: rate, CategoryName: null };
+            var productJSON = JSON.stringify(product);
+            $.ajax({
+                type: "POST",
+                url: productUrl,
+                contentType: "application/json; charset=utf-8",
+                data: productJSON,
+                dataType: "application/json",
+                success: function (response) {
+                    alert("save successful");
+                },
+                error: function (msg) {
+                    alert(msg);
+                }
+            });
+        }
+
+    </script>
+
+    <button id="button1">Call Post Method</button>
+</div>

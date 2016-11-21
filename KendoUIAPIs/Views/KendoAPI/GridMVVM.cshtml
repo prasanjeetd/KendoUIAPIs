@@ -1,0 +1,270 @@
+﻿@{
+    ViewBag.Title = "GridMVVM";
+}
+
+@Styles.Render("~/KendoLibrary/styles/kendo.common.min.css")
+@Styles.Render("~/KendoLibrary/styles/kendo.rtl.min.css")
+@Styles.Render("~/KendoLibrary/styles/kendo.default.min.css")
+
+@Scripts.Render("~/KendoLibrary/js/jquery.min.js")
+@Scripts.Render("~/KendoLibrary/js/kendo.web.min.js")
+
+<h2>GridMVVM</h2>
+
+@*<div id="example">
+    <div class="demo-section k-header">
+        <div class="box-col">
+            <h4>Add or update a record</h4>
+            <div data-role="grid"
+                 date-scrollable="true"
+                 data-editable="true"
+                 data-toolbar="['create', 'save']"
+                 data-columns="[
+                                 { 'field': 'ProductName', 'width': 270 },
+                                 { 'field': 'UnitPrice' },
+                              ]"
+                 data-bind="source: products,
+                            visible: isVisible,
+                            events: {
+                              save: onSave
+                            }"
+                 style="width: 480px; height: 200px"></div>
+        </div>
+        <div class="box-col console-section">
+            <h4>Console</h4>
+            <div class="console"></div>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-col" style="width: 480px">
+            <h4>Configuration</h4>
+            <div>
+                <label><input type="checkbox" data-bind="checked: isVisible">Visible</label>
+            </div>
+        </div>
+    </div>
+
+    @Scripts.Render("~/Scripts/KendoViewModels/MVVMViewModel.js")*@
+
+
+<script id="applicantlist-template" type="text/x-kendo-template">
+           
+    
+</script>
+
+<div>
+    <div class="box-col">
+        <h4>Master Grid</h4>
+
+        <div id="applicantGrid"
+            data-role="grid"
+            data-columns="[
+                                    { 'field': 'RoundName', 'title': 'Rounds', 'width': 270 },
+                                 ]"
+            data-bind="source: rounds, events: { dataBound: databound, detailInit: gridDetailInit }"
+            data-row-template="rowTemplate"
+            data-alt-row-template="altRowTemplate"
+            data-detail-template="detailTemplate">
+        </div>
+    </div>
+</div>
+
+<script id="rowTemplate" type="text/x-kendo-tmpl">
+		    <tr data-uid='#=uid#' class="k-master-row k-row"> 
+			    <td  class="k-hierarchy-cell k-counter">
+                    <a href="\#" class="k-icon k-plus" ></a>
+                </td> 		
+			    <td><span data-bind = "text:RoundName" > </span>  </td >
+		    </tr >
+</script>
+
+<script id="altRowTemplate" type="text/x-kendo-tmpl">
+           <tr data-uid='#=uid#' class="k-master-row k-alt-row"> 
+			    <td class="k-hierarchy-cell k-counter"> 
+                    <a href="\#" class="k-icon k-plus" style="display:none;"></a>
+                </td>
+                <td ><span data-bind = "text:RoundName" > </span> </td >         
+            </tr >
+</script>
+
+<script id="detailTemplate" type="text/x-kendo-tmpl">
+          <div class="detailGrid"></div>
+</script>
+
+@Scripts.Render("~/Scripts/KendoViewModels/MasterDetailGrid.js")
+
+<script>
+
+    var applicantModel = kendo.data.Model.define({
+        id: "ApplicantRoundID",
+        fields: {
+            ApplicantRoundID: { type: "number" },
+            ApplicantID: { type: "number" },
+            FirstName: { type: "string" },
+            MiddleName: { type: "string" },
+            LastName: { type: "string" },
+            Experience: { type: "number" },
+            PostID: { type: "number" },
+            PostName: { type: "string" },
+            RoundID: { type: "number" },
+            RoundName: { type: "string" }
+        }
+    });
+
+    var applicantListModel = kendo.observable({
+
+        rounds: new kendo.data.DataSource({
+            schema: {
+                model: {
+                    id: "RoundID",
+                    fields: {
+                        RoundID: {
+                            editable: false,
+                            nullable: true
+                        },
+                        RoundName: {
+                            editable: true,
+                            nullable: true
+                        }
+                    }
+                }
+            },
+            batch: true,
+            transport: {
+                read: {
+                    url: "http://localhost:1282/api/Applicants/GetRounds",
+                },
+                parameterMap: function (data, type) {
+                    if (type == "read") {
+                        // send take as "$top" and skip as "$skip"
+                        return {
+                            id: 1
+                        }
+                    }
+                }
+            },
+
+        }),
+
+        applicantListDS: new kendo.data.DataSource({
+            schema: {
+                model: applicantModel
+            },
+            transport: {
+                read: {
+                    url: "http://localhost:1282/api/Applicants/GetApplicantList",
+                    //dataType: "json"
+                },
+            },
+        }),
+
+        gridDetailInit: function (e) {
+
+            var detailRow = e.detailRow;
+            var detailCell = jQuery(detailRow).find(".k-detail-cell");
+            //console.log(detailCell);
+
+            var grid = $("#applicantGrid").data("kendoGrid");
+            var parentDataItem = grid.dataItem(e.masterRow);
+            var roundId = parentDataItem.RoundID;
+
+            var applicantListDS = applicantListModel.get("applicantListDS");
+            var detailDataSource = new kendo.data.DataSource({
+                schema: {
+                    model: applicantModel
+                },
+                filter: { field: "RoundID", operator: "eq", value: roundId },
+                data: applicantListDS.data()
+            });
+
+
+            $("<div id='newDetailGrid' class='detailGridClass'/>").appendTo(detailCell).kendoGrid({
+                dataSource: detailDataSource,
+
+                columns: [
+                    { field: "FirstName", title: "Name" },
+                    { field: "Experience", title: "Experience" },
+                    { field: "PostName", title: "Post" },
+                    { field: "RoundName", title: "Round" },
+                    {
+                        command:
+                          [
+                            "edit",
+                            {
+                                name: "deleteBatch",
+                                text: "Delete",
+                                click: function (e) {
+                                    e.preventDefault();
+                                }
+                            }
+                          ]
+                    }
+                ],
+                editable: "popup",
+                edit: function (e) {
+                    //debugger;
+                    //console.log(e);
+                    //var masterRow = this.wrapper.closest("tr.k-detail-row").prev(".k-master-row");
+                    //masterGrid = jQuery("#sampleGrid").data("kendoGrid");
+                    //var masterDataItem = masterGrid.dataItem(masterRow);
+                    //var maxData = detailData[detailData.length - 1];
+                    //e.model.set("BatchId", maxData.BatchId + 1);
+                    //e.model.set("ProductID", masterDataItem.ProductID);
+                },
+                save: function (e) {
+                    //debugger;
+                    //console.log(e);
+                    //$(detailCell).show();
+                }
+            });
+
+            //$(".detailGridClass .k-toolbar.k-grid-toolbar").css("display", "none");
+            //if (detailDataSource.view().length <= 0) {
+            //	$(detailCell).hide();
+            //}
+
+            detailDataSource.read();
+        },
+
+        databound: function (e) {
+            console.log(e);
+            applicantListModel.expandAllDetails();
+        },
+        //addNewBatch: function (e) {
+
+        //    var button = $(e.currentTarget).closest('tr').next().find(".k-grid-add");
+        //    $(button).click();
+        //},
+        expandAllDetails: function () {
+            var masterGrid = $("#applicantGrid").data("kendoGrid");
+            var rows = masterGrid.tbody.find("tr.k-master-row");
+            //console.log("Rows");
+            //console.log(rows);
+            masterGrid.expandRow(rows);
+        },
+
+        loadView: function () {
+            applicantView.render("#applicantlist");
+            var applicantListDS = applicantListModel.get("applicantListDS");
+            applicantListDS.read();
+        }
+
+    });
+
+    var applicantView = new kendo.View('applicantlist-template');
+    applicantView.model = applicantListModel;
+
+    var router = new kendo.Router({
+        init: function () {
+            console.log("Init called");
+            applicantListModel.loadView();
+        }
+    });
+
+
+    router.start();
+
+    kendo.bind($("#applicantGrid"), applicantListModel);
+
+</script>
