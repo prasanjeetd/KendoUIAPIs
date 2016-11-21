@@ -21,111 +21,16 @@
 
     <div id="app"></div>
 
-    <!--<script id="index" type="text/x-kendo-template">
-        Hello
-        <span data-bind="text: foo"></span>
-
-        <a href="#" data-bind="click: goToView2">Go to view 2</a>
-    </script>-->
-    <!--<script id="detail" type="text/x-kendo-template">
-        This is view 2
-
-        <a href="#/">Go to view 1</a>
-        <a href="#/optional/billa">Go to view 3</a>
-    </script>-->
-    <!--<script id="view3" type="text/x-kendo-template">
-        This is view 3
-
-        Param1
-        <span data-bind="text:param1"></span>
-
-        Param2
-        <span data-bind="text:param2"></span>
-
-        <a href="#/detail">Go to view 2</a>
-
-    </script>-->
-
     <script>
 
         //var url = '@Url.Action("DetailTemplate", "KendoAPI")';
         templateLoader.loadExtTemplate("/kendoapi/SPATemplates", function (result) {
 
-                    console.log("Template loaded");
-                    //viewmodel
-                    //var viewModel = kendo.observable({
+            console.log("Template loaded");
 
-                    //    foo: "World !",
+            window.router.start();
 
-                    //    init: function () {
-                    //        console.log("view init", this.foo);
-                    //    },
 
-                    //    show: function () {
-                    //        console.log("view show", this.foo);
-                    //    },
-
-                    //    goToView2: function (e) {
-                    //        router.navigate("/detail");
-                    //        e.preventDefault();
-                    //    }
-
-                    //});
-
-                    //layout , views
-                    //var layout = new kendo.Layout("<header>Header</header><section id='content'></section><footer>Footer</footer>");
-
-                    //var model = {
-                    //    model: viewModel,
-                    //    init: viewModel.init.bind(viewModel),
-                    //    show: viewModel.show.bind(viewModel)
-                    //};
-                    //var indexview = new kendo.View("index", model);
-
-                    //var detailview = new kendo.View("detail");
-
-                    //var view3Model = kendo.observable({
-                    //    param1: "Pussy",
-                    //    param2: "Cat"
-                    //});
-                    //var view3model = {
-                    //    model: view3Model
-                    //};
-
-                    //var view3 = new kendo.View("view3", view3model);
-
-                    ////router
-                    //var router = new kendo.Router();
-
-                    //router.bind("init", function () {
-                    //    layout.render($("#app"));
-                    //});
-
-                    //router.route("/", function () {
-                    //    layout.showIn("#content", indexview);
-                    //});
-
-                    //router.route("/detail", function () {
-                    //    layout.showIn("#content", detailview);
-                    //});
-
-                    //router.route("/optional(/:param1)(/:param2)", function (param1, param2) {
-                    //    console.log("parameter1:", param1, "parameter2:", param2);
-
-                    //    view3Model.param1 = param1;
-                    //    view3Model.param2 = param2;
-                    //    layout.showIn("#content", view3);
-                    //});
-
-                    //window.router = router;
-
-                    $(function () {
-                       
-                    });
-
-                    window.router.start();
-
-                    
         });
 
         $(document).bind("TEMPLATE_LOADED", function (e, path) {

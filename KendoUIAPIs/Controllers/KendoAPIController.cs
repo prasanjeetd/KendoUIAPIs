@@ -69,5 +69,10 @@ namespace KendoUIAPIs.Controllers
 
             return Content(htmlContent.ToString());
         }
+
+        public ActionResult KendoApp()
+        {
+            return View();
+        }
     }
 }

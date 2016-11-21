@@ -1059,8 +1059,10 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\KendoViewModels\indexVM.js" />
     <Content Include="Scripts\KendoViewModels\MasterDetailGrid.js" />
     <Content Include="Scripts\KendoViewModels\MVVMViewModel.js" />
+    <Content Include="Scripts\KendoViewModels\spaVM.js" />
     <Content Include="Scripts\KendoViewModels\templateLoader.js" />
     <Content Include="Scripts\knockout-2.2.0.debug.js" />
     <Content Include="Scripts\knockout-2.2.0.js" />
@@ -1102,6 +1104,7 @@
     <Content Include="Views\KendoAPI\MasterDetailGrid.cshtml" />
     <Content Include="Views\KendoAPI\SignalR.cshtml" />
     <Content Include="Views\KendoAPI\Templates\detail.tmpl.html" />
+    <Content Include="Views\KendoAPI\KendoApp.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

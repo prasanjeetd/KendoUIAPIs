@@ -1,0 +1,43 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section scriptsHeader {
+
+    <script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="http://kendo.cdn.telerik.com/2016.3.1028/js/kendo.all.min.js"></script>
+    
+    @*<script src="../../Scripts/KendoViewModels/templateLoader.js"></script>*@
+    
+    @Scripts.Render("~/Scripts/KendoViewModels/templateLoader.js")
+    
+}
+
+@section scripts {
+
+    <script src="../../Scripts/KendoViewModels/indexVM.js"></script>
+    <script src="../../Scripts/KendoViewModels/spaVM.js"></script>
+    
+}
+
+<h1>Kendo App</h1>
+
+<div id="app"></div>
+
+<script>
+
+        var url = '@Url.Action("SPATemplates", "KendoAPI")';
+        templateLoader.loadExtTemplate(url, function (result) {
+
+            console.log("Template loaded");
+
+            window.router.start();
+
+
+        });
+
+        $(document).bind("TEMPLATE_LOADED", function (e, path) {
+
+        });
+
+</script>
